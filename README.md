@@ -75,4 +75,4 @@ def GenAlg(n, m, T, prob, d):
 по ox - признаки (лучшие в поколении)
 по oy - номера поколений
 
-![alt text](https://github.com/elena111111/ML2/blob/master/GenAlg.png)
+![alt text](https://github.com/elena111111/ML/blob/master/GenAlg.png)
