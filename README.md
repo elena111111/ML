@@ -143,4 +143,4 @@ bestInd, res, scores = GenAlg(clf_tree, train_data_X, train_data_Y, test_data_X,
 ![alt text](https://github.com/elena111111/ML/blob/master/DecisionTree.pdf)
 
 И так работает классифицируются точки по отобранным признакам с помощью дерева решений:
-![alt text](https://github.com/elena111111/ML/blob/master/DecisionTreeClassifier.pdf)
+![alt text](https://github.com/elena111111/ML/blob/master/DecisionTreeClassifier.png)
