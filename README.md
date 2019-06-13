@@ -1,6 +1,5 @@
-﻿# Генетический алгоритм
+﻿# Генетический алгоритм - отбор признаков для дерева решений  
 
-  
 Создан класс *Individ* с методами:  
 
 ```python
@@ -144,3 +143,53 @@ bestInd, res, scores = GenAlg(clf_tree, train_data_X, train_data_Y, test_data_X,
 
 И так работает классифицируются точки по отобранным признакам с помощью дерева решений:
 ![alt text](https://github.com/elena111111/ML/blob/master/DecisionTreeClassifier.png)
+
+
+# LSA - латентно-семантический анализ
+
+1. Имея множество документов, составим частотную матрицу индексируемых слов: 
+строки соответствуют индексированным словам, а столбцы — документам. 
+В каждой ячейке матрицы указано какое количество раз слово встречается в соответствующем документе или
+вероятность встречаемости слова в документе. 
+
+2. Сингулярное разложение полученной матрицы (выделяет ключевые составляющие матрицы, позволяя игнорировать шумы):
+<a href="https://www.codecogs.com/eqnedit.php?latex=M&space;=&space;U&space;*&space;W&space;*&space;V^T" target="_blank"><img src="https://latex.codecogs.com/gif.latex?M&space;=&space;U&space;*&space;W&space;*&space;V^T" title="M = U * W * V^T" /></a>
+, где <a href="https://www.codecogs.com/eqnedit.php?latex=U,&space;V^T" target="_blank"><img src="https://latex.codecogs.com/gif.latex?U,&space;V^T" title="U, V^T" /></a>
+ - ортогональные матрицы, 
+<a href="https://www.codecogs.com/eqnedit.php?latex=W" target="_blank"><img src="https://latex.codecogs.com/gif.latex?W" title="W" /></a>
+ - диагональная матрица.
+
+Для визуализации возьмем двумерное сингулярное разложение.
+
+**Пример (отображение документов на плоскость):**  
+
+```python
+# входные данные:  
+ds = datasets.fetch_20newsgroups(subset='train', categories=categories, shuffle=False, random_state=42)
+data = ds.data
+
+# построение матрицы встречаемости слов в документах
+vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(1, 3))  #неинформативные слова не рассматриваем
+dtm = vectorizer.fit_transform(data)
+
+# уменьшение размерности с использованием усеченного SVD
+lsa = TruncatedSVD(2)   
+dtm_lsa = lsa.fit_transform(dtm)
+
+# отображаем 0 (по OX) и 1 стоблец (по OY) из dtm_lsa, для интереса оставим метки классов
+
+# полученную матрицу dtm_lsa используем как обучающую выборку для алгортима кластреризации
+
+dtm_lsa = np.asarray(dtm_lsa)
+
+algorithm = cluster.SpectralClustering(
+        n_clusters=len(categories), affinity='cosine', eigen_tol=0.0001)
+y_pred = algorithm.fit_predict(dtm_lsa) # цвета новых классов (не соответствуют цветам старых классов)
+
+# посмотрим, насколько похожи результаты
+```
+
+![alt text](https://github.com/elena111111/ML/blob/master/SpectralClustering.png)
+
+
+# Информационный критерий Акаике (AIC)
