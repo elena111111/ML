@@ -9,7 +9,7 @@ __init__(self, n_feat, clf, train_data_X, train_data_Y, test_data_X, test_data_Y
 get_fitness(self) - значение качества для данного индивида
 
 
-not_equal(self, other) - сравнение  
+not_equal(self, other) - сравнение
 
 
 # отношение <=
