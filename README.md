@@ -112,7 +112,7 @@ def GenAlg(clf, train_data_X, train_data_Y, test_data_X, test_data_Y, n, T, prob
 
 
 
-**Пример работы: Генетический алгоритм - отбор признаков для дерева решений**
+**Пример работы: Генетический алгоритм - отбор признаков для дерева решений**  
 Начальные значения
 ```python 
 clf_tree = DecisionTreeClassifier(criterion='entropy', max_depth=2, random_state=17, min_samples_leaf=6)
@@ -138,3 +138,9 @@ bestInd, res, scores = GenAlg(clf_tree, train_data_X, train_data_Y, test_data_X,
 
 
 ![alt text](https://github.com/elena111111/ML/blob/master/GenAlg.png)
+
+Мы получили следующее дерево решений: 
+![alt text](https://github.com/elena111111/ML/blob/master/DecisionTree.pdf)
+
+И так работает классифицируются точки по отобранным признакам с помощью дерева решений:
+![alt text](https://github.com/elena111111/ML/blob/master/DecisionTreeClassifier.pdf)
