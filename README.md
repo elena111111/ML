@@ -154,10 +154,8 @@ bestInd, res, scores = GenAlg(clf_tree, train_data_X, train_data_Y, test_data_X,
 
 2. Сингулярное разложение полученной матрицы (выделяет ключевые составляющие матрицы, позволяя игнорировать шумы):
 <a href="https://www.codecogs.com/eqnedit.php?latex=M&space;=&space;U&space;*&space;W&space;*&space;V^T" target="_blank"><img src="https://latex.codecogs.com/gif.latex?M&space;=&space;U&space;*&space;W&space;*&space;V^T" title="M = U * W * V^T" /></a>
-, где <a href="https://www.codecogs.com/eqnedit.php?latex=U,&space;V^T" target="_blank"><img src="https://latex.codecogs.com/gif.latex?U,&space;V^T" title="U, V^T" /></a>
- - ортогональные матрицы, 
-<a href="https://www.codecogs.com/eqnedit.php?latex=W" target="_blank"><img src="https://latex.codecogs.com/gif.latex?W" title="W" /></a>
- - диагональная матрица.
+, где <a href="https://www.codecogs.com/eqnedit.php?latex=U,&space;V^T" target="_blank"><img src="https://latex.codecogs.com/gif.latex?U,&space;V^T" title="U, V^T" /></a> -- ортогональные матрицы, 
+<a href="https://www.codecogs.com/eqnedit.php?latex=W" target="_blank"><img src="https://latex.codecogs.com/gif.latex?W" title="W" /></a> -- диагональная матрица.
 
 Для визуализации возьмем двумерное сингулярное разложение.
 
@@ -193,3 +191,59 @@ y_pred = algorithm.fit_predict(dtm_lsa) # цвета новых классов (
 
 
 # Информационный критерий Акаике (AIC)
+
+Сравним критерии:  
+AIC (внешний), LOO (внешний), SSE (внутренний).
+
+```python
+def get_loo(X, Y, clr):
+    res = 0
+    for i in range(len(X)):
+        newX, newY = np.delete(X, [i], 0), np.delete(Y, [i])
+        clr.fit(newX, newY)
+        predicted = clr.predict([X[i]])
+        res += (predicted - Y[i]) ** 2
+    return res
+
+def get_sse(Pa, Y):
+    return np.sum((Pa - Y) ** 2)
+
+def get_loo_sse_aic_rating(X_test, Y_test, X_train, Y_train, n, type="linear"):
+
+    is_linear = type == "linear"
+
+    if is_linear:
+        svd = TruncatedSVD(n_components=n, algorithm="arpack")
+        X_train = svd.fit_transform(X_train)
+        X_test = svd.fit_transform(X_test)
+        clr = LinearRegression()
+    else:
+        clr = SVR(kernel='poly', C=100, gamma='auto', degree=n, epsilon=.1, coef0=1, max_iter=100000)
+
+    clr.fit(X_train, Y_train)
+
+    sse = get_sse(clr.predict(X_train), Y_train)
+
+    l = len(X_train)
+    aic = 0
+    if is_linear:
+        aic = 2 * n + l * np.log(sse / (l - 2))
+    else:
+        aic = l / 2 + (l / 2) * np.log(2 * 3.1415 * sse) + n + 2
+
+    if l / n <= 40:
+        aic += (2 * n * (n + 1)) / (l - n - 2)
+
+    loo = get_loo(X_test, Y_test, clr)
+
+    return loo, sse, aic
+
+```
+
+1 - для полиномиальной модели (в зависимости от степени полинома)
+
+![alt text](https://github.com/elena111111/ML/blob/master/AIC_&_SSE_&_LOO_poly.png)
+
+2 - для линейной модели (в зависимости от количества признаков)
+
+![alt text](https://github.com/elena111111/ML/blob/master/AIC_&_SSE_&_LOO_poly_linear.png)
