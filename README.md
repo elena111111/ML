@@ -246,4 +246,4 @@ def get_loo_sse_aic_rating(X_test, Y_test, X_train, Y_train, n, type="linear"):
 
 2 - для линейной модели (в зависимости от количества признаков)
 
-![alt text](https://github.com/elena111111/ML/blob/master/AIC_&_SSE_&_LOO_poly_linear.png)
+![alt text](https://github.com/elena111111/ML/blob/master/AIC_&_SSE_&_LOO_linear.png)
